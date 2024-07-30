@@ -35,7 +35,7 @@ public class AsyncVideoConversionService : EndpointService
 
                 await FFMpegArguments.FromFileInput(sourcePath)
                     .OutputToPipe(new StreamPipeSink(outStream), options => options
-                        .WithVideoCodec(VideoCodec.LibVpx)
+                        .WithVideoCodec("vp9")
                         .WithAudioCodec(AudioCodec.LibVorbis)
                         .WithAudioBitrate(AudioQuality.Good)
                         .WithFastStart()
