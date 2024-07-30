@@ -1,0 +1,62 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GemBooru", "GemBooru\GemBooru.csproj", "{863057F3-9CF6-4A0A-9DAA-A97C47B7CCBB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bunkum.Protocols.Gemini", "Bunkum\Bunkum.Protocols.Gemini\Bunkum.Protocols.Gemini.csproj", "{9F166D92-7EC1-41E3-94D8-9E88BFB6123C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bunkum.Core", "Bunkum\Bunkum.Core\Bunkum.Core.csproj", "{4BE7C1C7-9E74-440B-B583-D6512353E9DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bunkum.Analyzers", "Bunkum\Bunkum.Analyzers\Bunkum.Analyzers.csproj", "{456853F4-7FED-43C6-AF84-8808EC219990}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bunkum.Listener", "Bunkum\Bunkum.Listener\Bunkum.Listener.csproj", "{731F8DF9-0D40-4303-88A0-A9D7FCF74BCE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bunkum.Protocols.TlsSupport", "Bunkum\Bunkum.Protocols.TlsSupport\Bunkum.Protocols.TlsSupport.csproj", "{55A90323-6C16-4F3F-AB41-2B5384E25F7E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bunkum", "Bunkum", "{787BE0AD-0B98-4EB2-A11A-281AF47270E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bunkum.EntityFrameworkDatabase", "Bunkum\Bunkum.EntityFrameworkDatabase\Bunkum.EntityFrameworkDatabase.csproj", "{4B5C133E-5FF6-47E5-95DE-6F2A7185787E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{863057F3-9CF6-4A0A-9DAA-A97C47B7CCBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{863057F3-9CF6-4A0A-9DAA-A97C47B7CCBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{863057F3-9CF6-4A0A-9DAA-A97C47B7CCBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{863057F3-9CF6-4A0A-9DAA-A97C47B7CCBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F166D92-7EC1-41E3-94D8-9E88BFB6123C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F166D92-7EC1-41E3-94D8-9E88BFB6123C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F166D92-7EC1-41E3-94D8-9E88BFB6123C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F166D92-7EC1-41E3-94D8-9E88BFB6123C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BE7C1C7-9E74-440B-B583-D6512353E9DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BE7C1C7-9E74-440B-B583-D6512353E9DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BE7C1C7-9E74-440B-B583-D6512353E9DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BE7C1C7-9E74-440B-B583-D6512353E9DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{456853F4-7FED-43C6-AF84-8808EC219990}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{456853F4-7FED-43C6-AF84-8808EC219990}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{456853F4-7FED-43C6-AF84-8808EC219990}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{456853F4-7FED-43C6-AF84-8808EC219990}.Release|Any CPU.Build.0 = Release|Any CPU
+		{731F8DF9-0D40-4303-88A0-A9D7FCF74BCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{731F8DF9-0D40-4303-88A0-A9D7FCF74BCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{731F8DF9-0D40-4303-88A0-A9D7FCF74BCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{731F8DF9-0D40-4303-88A0-A9D7FCF74BCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55A90323-6C16-4F3F-AB41-2B5384E25F7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55A90323-6C16-4F3F-AB41-2B5384E25F7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55A90323-6C16-4F3F-AB41-2B5384E25F7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55A90323-6C16-4F3F-AB41-2B5384E25F7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B5C133E-5FF6-47E5-95DE-6F2A7185787E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B5C133E-5FF6-47E5-95DE-6F2A7185787E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B5C133E-5FF6-47E5-95DE-6F2A7185787E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B5C133E-5FF6-47E5-95DE-6F2A7185787E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{456853F4-7FED-43C6-AF84-8808EC219990} = {787BE0AD-0B98-4EB2-A11A-281AF47270E2}
+		{731F8DF9-0D40-4303-88A0-A9D7FCF74BCE} = {787BE0AD-0B98-4EB2-A11A-281AF47270E2}
+		{4BE7C1C7-9E74-440B-B583-D6512353E9DE} = {787BE0AD-0B98-4EB2-A11A-281AF47270E2}
+		{55A90323-6C16-4F3F-AB41-2B5384E25F7E} = {787BE0AD-0B98-4EB2-A11A-281AF47270E2}
+		{9F166D92-7EC1-41E3-94D8-9E88BFB6123C} = {787BE0AD-0B98-4EB2-A11A-281AF47270E2}
+		{4B5C133E-5FF6-47E5-95DE-6F2A7185787E} = {787BE0AD-0B98-4EB2-A11A-281AF47270E2}
+	EndGlobalSection
+EndGlobal
