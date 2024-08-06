@@ -1,6 +1,5 @@
 using Bunkum.Core.Database;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace GemBooru.Database;
 

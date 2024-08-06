@@ -1,5 +1,4 @@
 using Bunkum.EntityFrameworkDatabase;
-using Microsoft.EntityFrameworkCore;
 
 namespace GemBooru.Database;
 
