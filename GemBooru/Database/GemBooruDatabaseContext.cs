@@ -40,15 +40,18 @@ public class GemBooruDatabaseContext : DbContext, IDatabaseContext
         .Include(t => t.Post)
         .Include(t => t.Post.Uploader)
         .Select(t => t.Post)
+        .OrderByDescending(p => p.UploadDate)
         .Skip(skip)
         .Take(count);
 
     public IQueryable<DbPost> GetAllPostsByUser(int userId) => Posts
-            .Where(p => p.UploaderId == userId)
-            .Include(p => p.Uploader);
+        .Where(p => p.UploaderId == userId)
+        .OrderByDescending(p => p.UploadDate)
+        .Include(p => p.Uploader);
     
     public IQueryable<DbPost> GetPostsByUser(int skip, int count, int userId) => Posts
         .Where(p => p.UploaderId == userId)
+        .OrderByDescending(p => p.UploadDate)
         .Include(p => p.Uploader)
         .Skip(skip)
         .Take(count);
