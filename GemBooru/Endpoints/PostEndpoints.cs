@@ -109,8 +109,8 @@ public class PostEndpoints : EndpointGroup
         if (!database.TagPost(post, input))
             return new Response("Unable to tag post.", statusCode: BadRequest);
         
-        return new Response($$"""
-                            Tag {{input}} has been added to post.
+        return new Response($"""
+                            Tag {input} has been added to post.
                             
                             => /post/{postId} Back to post
                             => /tag/{postId} Tag again
