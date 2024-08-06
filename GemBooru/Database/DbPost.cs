@@ -23,7 +23,14 @@ public class DbPost
      public int UploaderId { get; set; }
      public DbUser Uploader { get; set; }
      
-     public DateTime UploadDate { get; set; }
+     public DateTimeOffset UploadDate { get; set; }
      
      public PostType PostType { get; set; }
+
+     public string GetImageUrl() =>
+          $"/img/{this.PostId}{PostType switch {
+               PostType.Image => ".png",
+               PostType.Video => ".webm",
+               PostType.Audio => ".ogg",
+          }}";
 }

@@ -13,10 +13,24 @@ public class GemBooruDatabaseContext(GemBooruConfig config) : DbContext, IDataba
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) 
         => optionsBuilder.UseNpgsql(config.PostgresSqlConnectionString);
 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<DbTagRelation>()
+            .HasIndex(p => new {p.Tag , p.PostId}).IsUnique();
+    }
+    
     public int TotalPostCount() => Posts.Count();
     public int TotalUserCount() => Users.Count();
 
-    public IQueryable<DbPost> GetPosts(int skip, int count) => Posts.Skip(skip).Take(count).Include(p => p.Uploader);
+    public IQueryable<DbPost> GetAllPosts(int skip, int count) => Posts.Skip(skip).Take(count).Include(p => p.Uploader);
+
+    public IQueryable<DbPost> GetPostsByTag(int skip, int count, string tag) => TagRelations
+        .Where(t => t.Tag == tag)
+        .Include(t => t.Post)
+        .Include(t => t.Post.Uploader)
+        .Select(t => t.Post)
+        .Skip(skip)
+        .Take(count);
 
     public DbPost CreatePost(int uploaderId)
     {
@@ -26,7 +40,7 @@ public class GemBooruDatabaseContext(GemBooruConfig config) : DbContext, IDataba
             Height = 0,
             FileSizeInBytes = 0,
             UploaderId = uploaderId,
-            UploadDate = DateTime.UtcNow,
+            UploadDate = DateTimeOffset.UtcNow,
             Source = null,
         });
 
@@ -37,6 +51,33 @@ public class GemBooruDatabaseContext(GemBooruConfig config) : DbContext, IDataba
         
         return post.Entity;
     }
+
+    public bool TagPost(DbPost post, string tag)
+    {
+        // Normalize the tag
+        var normalizedTag = tag.ToLower().Replace('-', '_').Replace(' ', '_');
+
+        // Block any too long tags
+        if (tag.Length > DbTagRelation.MaxTagLength)
+            return false;
+        
+        // Prevent the same tag from being applied twice
+        if (this.TagRelations.Any(t => t.PostId == post.PostId && t.Tag == normalizedTag))
+            return false;
+
+        // Add the tag relation to the database
+        Add(new DbTagRelation
+        {
+            Post = post,
+            Tag = normalizedTag,
+        });
+
+        return true;
+    }
+
+    public IQueryable<DbTagRelation> GetTagsForPost(int postId) => TagRelations.Where(t => t.PostId == postId);
+
+    public DbPost? GetPostById(int id) => Posts.Include(p => p.Uploader).FirstOrDefault(p => p.PostId == id);
 
     public void DeletePost(int postId)
     {

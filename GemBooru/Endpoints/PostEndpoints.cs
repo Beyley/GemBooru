@@ -10,8 +10,6 @@ using Bunkum.Listener.Protocol;
 using Bunkum.Protocols.Gemini;
 using Bunkum.Protocols.Gemini.Responses;
 using FFMpegCore;
-using FFMpegCore.Enums;
-using FFMpegCore.Pipes;
 using GemBooru.Database;
 using GemBooru.Services;
 using Humanizer;
@@ -24,11 +22,27 @@ public class PostEndpoints : EndpointGroup
 {
     [GeminiEndpoint("/posts")]
     [GeminiEndpoint("/posts/{page}")]
-    public string GetPosts(RequestContext context, GemBooruDatabaseContext database, int page)
+    [GeminiEndpoint("/posts/{searchType}/{query}")]
+    [GeminiEndpoint("/posts/{searchType}/{query}/{page}")]
+    [NullStatusCode(NotFound)]
+    public string? GetPosts(RequestContext context, GemBooruDatabaseContext database, int page, string? searchType, string? query)
     {
         const int pageSize = 20;
 
-        var posts = database.GetPosts(page * pageSize, pageSize).ToList();
+        int skip = page * pageSize;
+        
+        List<DbPost> posts;
+        if (searchType != null && query != null)
+            switch (searchType)
+            {
+                case "by_tag":
+                    posts = database.GetPostsByTag(skip, pageSize, query).ToList();
+                    break;
+                default:
+                    return null;
+            }
+        else
+            posts = database.GetAllPosts(skip, pageSize).ToList();
 
         StringBuilder response = new();
         
@@ -38,29 +52,68 @@ public class PostEndpoints : EndpointGroup
         {
             response.AppendLine($"## Post by {post.Uploader.Name}");
             response.AppendLine(
-                $"### Uploaded {post.UploadDate.Humanize(true, DateTime.UtcNow, CultureInfo.InvariantCulture)}");
+                $"### Uploaded {post.UploadDate.Humanize(DateTimeOffset.UtcNow, CultureInfo.InvariantCulture)}");
 
             response.AppendLine($"=> /post/{post.PostId} View Post");
             response.AppendLine($"=> /user/{post.UploaderId} View User");
-            switch (post.PostType)
-            {
-                case PostType.Image:
-                    response.AppendLine($"=> /img/{post.PostId}.png View Image");
-                    break;
-                case PostType.Video:
-                    response.AppendLine($"=> /img/{post.PostId}.webm View Video");
-                    break;
-                case PostType.Audio:
-                    response.AppendLine($"=> /img/{post.PostId}.ogg View Audio");
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            response.AppendLine($"=> {post.GetImageUrl()} View {post.PostType.ToString()}");
         }
 
         return response.ToString();
     }
+    
+    [GeminiEndpoint("/post/{postId}")]
+    [NullStatusCode(NotFound)]
+    public string? GetPost(RequestContext context, GemBooruDatabaseContext database, int postId)
+    {
+        var post = database.GetPostById(postId);
+        if (post == null)
+            return null;
 
+        var tags = database.GetTagsForPost(postId);
+        
+        StringBuilder tagString = new StringBuilder();
+        foreach (var tagRelation in tags)
+        {
+            tagString.AppendFormat("=> /posts/by_tag/{0} {0}\n", tagRelation.Tag);
+        }
+        
+        return $"""
+               ## Uploaded {post.UploadDate.Humanize(DateTimeOffset.UtcNow, CultureInfo.InvariantCulture)}
+               ## Posted by {post.Uploader.Name}
+               => /user/{post.UploaderId} View profile
+               
+               ## Tags:
+               {tagString}
+               
+               => {post.GetImageUrl()} View {post.PostType.ToString()} 
+               
+               => /tag/{post.PostId} Add Tag
+               """;
+    }
+
+    [GeminiEndpoint("/tag/{postId}")]
+    public Response TagPost(RequestContext context, GemBooruDatabaseContext database, int postId)
+    {
+        string? input = context.QueryString["input"];
+        if (string.IsNullOrEmpty(input))
+            return new Response("Enter the tag", statusCode: Continue);
+
+        var post = database.GetPostById(postId);
+        if (post == null) 
+            return NotFound;
+        
+        // If tagging the post fails, return a bad request
+        if (!database.TagPost(post, input))
+            return new Response("Unable to tag post.", statusCode: BadRequest);
+        
+        return new Response($"""
+                            Tag {input} has been added to post.
+                            
+                            => /post/{postId} Back to post
+                            """, GeminiContentTypes.Gemtext);
+    }
+    
     [GeminiEndpoint("/img/{path}")]
     public Response GetImage(RequestContext context, IDataStore dataStore, string path)
     {
