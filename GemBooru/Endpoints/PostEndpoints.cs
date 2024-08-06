@@ -11,7 +11,6 @@ using Bunkum.Protocols.Gemini;
 using Bunkum.Protocols.Gemini.Responses;
 using FFMpegCore;
 using GemBooru.Attributes;
-using GemBooru.Authentication;
 using GemBooru.Database;
 using GemBooru.Helpers;
 using GemBooru.Services;
@@ -28,11 +27,11 @@ public class PostEndpoints : EndpointGroup
     [GeminiEndpoint("/posts/{searchType}/{query}")]
     [GeminiEndpoint("/posts/{searchType}/{query}/{page}")]
     [NullStatusCode(NotFound)]
-    public string? GetPosts(RequestContext context, GemBooruDatabaseContext database, int page, string? searchType, string? query)
+    public string? GetPosts(RequestContext context, GemBooruDatabaseContext database, int? page, string? searchType, string? query)
     {
         const int pageSize = 20;
 
-        int skip = page * pageSize;
+        var skip = (page ?? 0) * pageSize;
         
         List<DbPost> posts;
         if (searchType != null && query != null)
