@@ -10,6 +10,7 @@ using Bunkum.Listener.Protocol;
 using Bunkum.Protocols.Gemini;
 using Bunkum.Protocols.Gemini.Responses;
 using FFMpegCore;
+using GemBooru.Attributes;
 using GemBooru.Authentication;
 using GemBooru.Database;
 using GemBooru.Services;
@@ -97,12 +98,11 @@ public class PostEndpoints : EndpointGroup
     }
 
     [GeminiEndpoint("/tag/{postId}")]
-    public Response TagPost(RequestContext context, GemBooruDatabaseContext database, int postId)
+    [RequiresInput("Please enter the tag")]
+    public Response TagPost(RequestContext context, GemBooruDatabaseContext database, int postId, string input)
     {
-        string? input = context.QueryString["input"];
-        if (string.IsNullOrEmpty(input))
-            return new Response("Enter the tag", statusCode: Continue);
-
+        input = input.Trim();
+        
         var post = database.GetPostById(postId);
         if (post == null) 
             return NotFound;

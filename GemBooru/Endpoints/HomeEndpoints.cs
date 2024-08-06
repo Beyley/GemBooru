@@ -9,7 +9,7 @@ public class HomeEndpoints : EndpointGroup
 {
     [GeminiEndpoint("/")]
     public string HomePage(RequestContext context, GemBooruDatabaseContext database) => $"""
-         # Gembooru
+         # GemBooru
 
          A simple image booru capsule.
 
