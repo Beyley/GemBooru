@@ -92,19 +92,36 @@ public class PostEndpoints : EndpointGroup
         {
             tagString.AppendFormat("=> /posts/by_tag/{0} {0}\n", tagRelation.Tag);
         }
+
+        StringBuilder response = new StringBuilder();
+
+        response.AppendLine(
+            $"## Uploaded {post.UploadDate.Humanize(DateTimeOffset.UtcNow, CultureInfo.InvariantCulture)}");
+        response.AppendLine($"## Posted by {post.Uploader.Name}");
+        response.AppendLine($"=> /user/{post.UploaderId} View profile");
+        response.AppendLine();
+        response.AppendLine("## Tags:");
+        response.AppendLine(tagString.ToString());
+        response.AppendLine();
+        if (post.Processed)
+            response.AppendLine($"=> {post.GetImageUrl()} View {post.PostType.ToString()}");
+        else 
+            response.AppendLine("This post is currently being processed! Please check back later.");
+        response.AppendLine();
+        response.AppendLine($"=> /tag/{post.PostId} Add Tag");
         
-        return $"""
-               ## Uploaded {post.UploadDate.Humanize(DateTimeOffset.UtcNow, CultureInfo.InvariantCulture)}
-               ## Posted by {post.Uploader.Name}
-               => /user/{post.UploaderId} View profile
-               
-               ## Tags:
-               {tagString}
-               
-               => {post.GetImageUrl()} View {post.PostType.ToString()} 
-               
-               => /tag/{post.PostId} Add Tag
-               """;
+        return response.ToString();
+        
+        return $@"
+
+
+
+## Tags:
+{tagString}
+
+ 
+
+";
     }
 
     [GeminiEndpoint("/tag/{postId}")]
