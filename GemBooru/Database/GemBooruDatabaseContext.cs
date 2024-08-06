@@ -33,7 +33,11 @@ public class GemBooruDatabaseContext : DbContext, IDatabaseContext
     public int TotalPostCount() => Posts.Count();
     public int TotalUserCount() => Users.Count();
 
-    public IQueryable<DbPost> GetAllPosts(int skip, int count) => Posts.Skip(skip).Take(count).Include(p => p.Uploader);
+    public IQueryable<DbPost> GetAllPosts(int skip, int count) => Posts
+        .OrderByDescending(p => p.UploadDate)
+        .Skip(skip)
+        .Take(count)
+        .Include(p => p.Uploader);
 
     public IQueryable<DbPost> GetPostsByTag(int skip, int count, string tag) => TagRelations
         .Where(t => t.Tag == tag)

@@ -109,10 +109,11 @@ public class PostEndpoints : EndpointGroup
         if (!database.TagPost(post, input))
             return new Response("Unable to tag post.", statusCode: BadRequest);
         
-        return new Response($"""
-                            Tag {input} has been added to post.
+        return new Response($$"""
+                            Tag {{input}} has been added to post.
                             
                             => /post/{postId} Back to post
+                            => /tag/{postId} Tag again
                             """, GeminiContentTypes.Gemtext);
     }
     
@@ -194,7 +195,7 @@ public class PostEndpoints : EndpointGroup
                 });
                 post.FileSizeInBytes = (int)outStream.Length;
                 post.PostType = PostType.Image;
-                
+
                 return new Response($"""
                                      # Post Uploaded!
 
@@ -204,6 +205,8 @@ public class PostEndpoints : EndpointGroup
                                      Size: {post.FileSizeInBytes.Bytes().ToFullWords()}
 
                                      => {UrlHelpers.WithSchemeAndPath(config.ExternalUrl, "gemini", $"/post/{post.PostId}")} Go To Post
+                                     => /upload Upload again
+                                     => {UrlHelpers.WithSchemeAndPath(config.ExternalUrl, "gemini", $"/tag/{post.PostId}")} Tag post
                                      """, GeminiContentTypes.Gemtext);
             }
             case ContentType.Webm:
@@ -235,6 +238,8 @@ public class PostEndpoints : EndpointGroup
                                       Dimensions: {mediaInfo.PrimaryVideoStream.Width:N0}x{mediaInfo.PrimaryVideoStream.Height:N0}
 
                                       => {UrlHelpers.WithSchemeAndPath(config.ExternalUrl, "gemini", $"/post/{post.PostId}")} Go To Post
+                                      => /upload Upload again
+                                      => {UrlHelpers.WithSchemeAndPath(config.ExternalUrl, "gemini", $"/tag/{post.PostId}")} Tag post
                                       """, GeminiContentTypes.Gemtext);
             }
             default:
