@@ -104,7 +104,8 @@ public class GemBooruDatabaseContext : DbContext, IDatabaseContext
     }
 
     public IQueryable<DbTagRelation> GetTagsForPost(int postId) => TagRelations.Where(t => t.PostId == postId);
-
+    public int GetTagCountFromPost(int postId) => TagRelations.Count(t => t.PostId == postId);
+    
     public DbPost? GetPostById(int id) => Posts.Include(p => p.Uploader).FirstOrDefault(p => p.PostId == id);
 
     public void DeletePost(int postId)

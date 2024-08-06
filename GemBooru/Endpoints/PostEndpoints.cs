@@ -57,6 +57,9 @@ public class PostEndpoints : EndpointGroup
             response.AppendLine(
                 $"### Uploaded {post.UploadDate.Humanize(DateTimeOffset.UtcNow, CultureInfo.InvariantCulture)}");
 
+            if (database.GetTagCountFromPost(post.PostId) > 0) 
+                response.AppendLine($"Tags: {string.Join(", ", database.GetTagsForPost(post.PostId).Select(t => t.Tag))}");
+
             response.AppendLine($"=> /post/{post.PostId} View Post");
             response.AppendLine($"=> /user/{post.UploaderId} View User");
             response.AppendLine($"=> {post.GetImageUrl()} View {post.PostType.ToString()}");
