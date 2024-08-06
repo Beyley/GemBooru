@@ -52,7 +52,6 @@ public class UserEndpoints : EndpointGroup
             
             => /user_settings/name Change Name
             => /user_settings/bio Change Biography
-            
             """
             );
         
