@@ -6,7 +6,7 @@ namespace GemBooru.Database;
 public class GemBooruDatabaseProvider(GemBooruConfig config) : EntityFrameworkDatabaseProvider<GemBooruDatabaseContext>
 {
     protected override EntityFrameworkInitializationStyle InitializationStyle =>
-        EntityFrameworkInitializationStyle.EnsureCreated;
+        EntityFrameworkInitializationStyle.Migrate;
 
     public override GemBooruDatabaseContext GetContext() => new(config);
-}       
+}
