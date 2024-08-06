@@ -1,11 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Bunkum.Core.Authentication;
 using Microsoft.EntityFrameworkCore;
 
 namespace GemBooru.Database;
 
 [PrimaryKey(nameof(UserId))]
-public class DbUser
+public class DbUser : IUser
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

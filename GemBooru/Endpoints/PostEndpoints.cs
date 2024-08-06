@@ -10,6 +10,7 @@ using Bunkum.Listener.Protocol;
 using Bunkum.Protocols.Gemini;
 using Bunkum.Protocols.Gemini.Responses;
 using FFMpegCore;
+using GemBooru.Authentication;
 using GemBooru.Database;
 using GemBooru.Services;
 using Humanizer;
@@ -37,6 +38,9 @@ public class PostEndpoints : EndpointGroup
             {
                 case "by_tag":
                     posts = database.GetPostsByTag(skip, pageSize, query).ToList();
+                    break;
+                case "by_user":
+                    posts = database.GetPostsByUser(skip, pageSize, int.Parse(query)).ToList();
                     break;
                 default:
                     return null;
@@ -144,7 +148,14 @@ public class PostEndpoints : EndpointGroup
     }
 
     [GeminiEndpoint("/upload"), AllowEmptyBody]
-    public Response UploadPost(RequestContext context, GemBooruDatabaseContext database, IDataStore dataStore, AsyncVideoConversionService videoConversionService, byte[] body)
+    [Authentication(true)]
+    public Response UploadPost(
+        RequestContext context, 
+        DbUser user, 
+        GemBooruDatabaseContext database, 
+        IDataStore dataStore, 
+        AsyncVideoConversionService videoConversionService, 
+        byte[] body)
     {
         // Redirect non-titan requests back to the home page
         if (context.Url.Scheme != "titan")
@@ -159,15 +170,9 @@ public class PostEndpoints : EndpointGroup
         if (body.Length > sizeLimit)
             return new Response($"Images must be under {sizeLimit.Bytes().ToString()}", ContentType.Plaintext, BadRequest);
 
-        var certHash = context.RemoteCertificate.GetCertHashString(HashAlgorithmName.SHA256);
-
-        var uploader = database.CreateOrGetUser(certHash, "Unnamed User");
-
-        uploader.Name = "Unnamed User " + uploader.UserId;
-
         database.SaveChanges();
 
-        var post = database.CreatePost(uploader.UserId);
+        var post = database.CreatePost(user.UserId);
 
         switch (context.RequestHeaders["Content-Type"])
         {

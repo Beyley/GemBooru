@@ -5,6 +5,7 @@ using Bunkum.Core.Configuration;
 using Bunkum.Core.Storage;
 using Bunkum.Protocols.Gemini;
 using GemBooru;
+using GemBooru.Authentication;
 using GemBooru.Database;
 using GemBooru.Services;
 using NotEnoughLogs;
@@ -33,6 +34,7 @@ server.Initialize = s =>
     GemBooruDatabaseProvider databaseProvider = new(config);
     s.UseDatabaseProvider(databaseProvider);
     s.AddService(new AsyncVideoConversionService(s.Logger, dataStore, databaseProvider));
+    s.AddAuthenticationService(new CertificateAuthenticationProvider());
 };
 
 server.Start();

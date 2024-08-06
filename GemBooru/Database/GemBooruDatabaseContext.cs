@@ -32,6 +32,16 @@ public class GemBooruDatabaseContext(GemBooruConfig config) : DbContext, IDataba
         .Skip(skip)
         .Take(count);
 
+    public IQueryable<DbPost> GetAllPostsByUser(int userId) => Posts
+            .Where(p => p.UploaderId == userId)
+            .Include(p => p.Uploader);
+    
+    public IQueryable<DbPost> GetPostsByUser(int skip, int count, int userId) => Posts
+        .Where(p => p.UploaderId == userId)
+        .Include(p => p.Uploader)
+        .Skip(skip)
+        .Take(count);
+
     public DbPost CreatePost(int uploaderId)
     {
         var post = Posts.Add(new DbPost
