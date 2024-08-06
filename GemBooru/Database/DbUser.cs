@@ -18,4 +18,7 @@ public class DbUser : IUser
     
     [MaxLength(64)]
     public string Name { get; set; }
+    
+    [MaxLength(4096)]
+    public string Bio { get; set; }
 }

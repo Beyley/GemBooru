@@ -107,6 +107,7 @@ public class GemBooruDatabaseContext(GemBooruConfig config) : DbContext, IDataba
             {
                 CertificateHash = certificateHash,
                 Name = name,
+                Bio = "This user hasn't introduced themselves.",
             });
 
             SaveChanges();

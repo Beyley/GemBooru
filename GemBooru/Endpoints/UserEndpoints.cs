@@ -23,6 +23,9 @@ public class UserEndpoints : EndpointGroup
 
         response.AppendLine($"""
                          # {user.Name}
+                         
+                         ## Biography
+                         {user.Bio}
 
                          ## Made {"post".ToQuantity(database.GetAllPostsByUser(user.UserId).Count())}
                          
@@ -48,6 +51,8 @@ public class UserEndpoints : EndpointGroup
             On this page you can change various settings.
             
             => /user_settings/name Change Name
+            => /user_settings/bio Change Biography
+            
             """
             );
         
@@ -67,4 +72,17 @@ public class UserEndpoints : EndpointGroup
         // Redirect back to the user settings page after its updated
         return new Response("/user_settings", statusCode: Redirect);
     }
+
+    [GeminiEndpoint("/user_settings/bio")]
+    [Authentication(true)]
+    [RequiresInput("Please enter your new bio")]
+    public Response ChangeBio(RequestContext context, DbUser user, string input, GemBooruDatabaseContext database)
+    {
+        user.Bio = input.Trim();
+
+        database.SaveChanges();
+
+        return new Response("/user_settings", statusCode: Redirect);
+    }
+    
 }
