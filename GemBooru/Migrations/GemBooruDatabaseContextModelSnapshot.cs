@@ -39,6 +39,11 @@ namespace GemBooru.Migrations
                     b.Property<int>("PostType")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("Processed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
                     b.Property<string>("Source")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");

@@ -165,7 +165,7 @@ public class PostEndpoints : EndpointGroup
         DbUser user, 
         GemBooruDatabaseContext database, 
         IDataStore dataStore, 
-        AsyncVideoConversionService videoConversionService, 
+        AsyncContentConversionService contentConversionService, 
         GeminiBunkumConfig config,
         byte[] body)
     {
@@ -183,9 +183,7 @@ public class PostEndpoints : EndpointGroup
             return new Response($"Images must be under {sizeLimit.Bytes().ToString()}", ContentType.Plaintext, BadRequest);
 
         database.SaveChanges();
-
-        var post = database.CreatePost(user.UserId);
-
+        
         switch (context.RequestHeaders["Content-Type"])
         {
             case ContentType.Apng:
@@ -195,21 +193,19 @@ public class PostEndpoints : EndpointGroup
             case ContentType.Bmp:
             case ContentType.Webp:
             {
-                using var img = Image.Load(body);
+                var img = Image.Load(body);
                 
+                var post = database.CreatePost(user.UserId);
+
                 post.Width = img.Width;
                 post.Height = img.Height;
-
-                using var outStream = dataStore.OpenWriteStream(post.PostId + ".png");
-                img.SaveAsPng(outStream, new PngEncoder
-                {
-                    CompressionLevel = PngCompressionLevel.BestCompression
-                });
-                post.FileSizeInBytes = (int)outStream.Length;
+                
                 post.PostType = PostType.Image;
+                
+                contentConversionService.SerializeImage(img, post.PostId, post.PostId + ".png");
 
                 return new Response($"""
-                                     # Post Uploaded!
+                                     # Image uploaded! The post will be available after it has been processed.
 
                                      ## Details
 
@@ -233,13 +229,15 @@ public class PostEndpoints : EndpointGroup
                     return new Response($"Video file contains no video streams.", ContentType.Plaintext, BadRequest);
                 }
 
+                var post = database.CreatePost(user.UserId);
+
                 post.Width = mediaInfo.PrimaryVideoStream.Width;
                 post.Height = mediaInfo.PrimaryVideoStream.Height;
                 post.PostType = PostType.Video;
 
                 var postId = post.PostId;
 
-                videoConversionService.ConvertVideo(body, postId, postId + ".webm");
+                contentConversionService.ConvertVideo(body, postId, postId + ".webm");
 
                 return new Response($"""
                                       # Post Uploaded!

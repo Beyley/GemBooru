@@ -28,6 +28,10 @@ public class GemBooruDatabaseContext : DbContext, IDatabaseContext
     {
         modelBuilder.Entity<DbTagRelation>()
             .HasIndex(p => new {p.Tag , p.PostId}).IsUnique();
+        
+        modelBuilder.Entity<DbPost>()  
+            .Property(b => b.Processed)  
+            .HasDefaultValue(true);
     }
     
     public int TotalPostCount() => Posts.Count();
@@ -35,6 +39,7 @@ public class GemBooruDatabaseContext : DbContext, IDatabaseContext
 
     public IQueryable<DbPost> GetAllPosts(int skip, int count) => Posts
         .OrderByDescending(p => p.UploadDate)
+        .Where(p => p.Processed)
         .Skip(skip)
         .Take(count)
         .Include(p => p.Uploader);
@@ -44,6 +49,7 @@ public class GemBooruDatabaseContext : DbContext, IDatabaseContext
         .Include(t => t.Post)
         .Include(t => t.Post.Uploader)
         .Select(t => t.Post)
+        .Where(p => p.Processed)
         .OrderByDescending(p => p.UploadDate)
         .Skip(skip)
         .Take(count);
@@ -72,6 +78,7 @@ public class GemBooruDatabaseContext : DbContext, IDatabaseContext
             UploaderId = uploaderId,
             UploadDate = DateTimeOffset.UtcNow,
             Source = null,
+            Processed = false,
         });
 
         SaveChanges();

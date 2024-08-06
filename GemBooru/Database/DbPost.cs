@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,8 @@ public class DbPost
      public DateTimeOffset UploadDate { get; set; }
      
      public PostType PostType { get; set; }
+
+     public bool Processed { get; set; } = true;
 
      public string GetImageUrl() =>
           $"/img/{this.PostId}{PostType switch {

@@ -33,7 +33,7 @@ server.Initialize = s =>
 
     GemBooruDatabaseProvider databaseProvider = new(config);
     s.UseDatabaseProvider(databaseProvider);
-    s.AddService(new AsyncVideoConversionService(s.Logger, dataStore, databaseProvider));
+    s.AddService(new AsyncContentConversionService(s.Logger, dataStore, databaseProvider));
     s.AddService<RequiresInputService>();
     s.AddAuthenticationService(new CertificateAuthenticationProvider(), failureStatusCode: Unauthorized);
     
