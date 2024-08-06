@@ -29,7 +29,11 @@ public class PostEndpoints : EndpointGroup
     {
         const int pageSize = 20;
 
-        var skip = (page ?? 0) * pageSize;
+        page = page ?? 0;
+        
+        var skip = page.Value * pageSize;
+
+        var totalPostCount = database.TotalPostCount();
         
         List<DbPost> posts;
         if (searchType != null && query != null)
@@ -49,7 +53,12 @@ public class PostEndpoints : EndpointGroup
 
         StringBuilder response = new();
         
-        response.AppendLine($@"# Showing {posts.Count} posts");
+        response.AppendLine($@"# Showing {posts.Count}/{totalPostCount} posts");
+        response.AppendLine($@"### Page {(int)page + 1}/{(totalPostCount + 20) / pageSize}");
+        if(page > 0)
+            response.AppendLine($"=> /posts/{page - 1} Previous Page");
+        if(skip + pageSize < totalPostCount)
+            response.AppendLine($"=> /posts/{page + 1} Next Page");
         response.Append('\n');
         foreach (var post in posts)
         {

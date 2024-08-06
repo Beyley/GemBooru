@@ -59,6 +59,8 @@ public class GemBooruDatabaseContext : DbContext, IDatabaseContext
         .Include(p => p.Uploader)
         .Skip(skip)
         .Take(count);
+    
+    public int GetTotalPostCount() => Posts.Count();
 
     public DbPost CreatePost(int uploaderId)
     {
