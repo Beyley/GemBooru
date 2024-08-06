@@ -13,6 +13,7 @@ using FFMpegCore;
 using GemBooru.Attributes;
 using GemBooru.Authentication;
 using GemBooru.Database;
+using GemBooru.Helpers;
 using GemBooru.Services;
 using Humanizer;
 using SixLabors.ImageSharp;
@@ -155,6 +156,7 @@ public class PostEndpoints : EndpointGroup
         GemBooruDatabaseContext database, 
         IDataStore dataStore, 
         AsyncVideoConversionService videoConversionService, 
+        GeminiBunkumConfig config,
         byte[] body)
     {
         // Redirect non-titan requests back to the home page
@@ -204,7 +206,7 @@ public class PostEndpoints : EndpointGroup
                                      Dimensions: {img.Width:N0}x{img.Height:N0}
                                      Size: {post.FileSizeInBytes.Bytes().ToFullWords()}
 
-                                     => /post/{post.PostId} Go To Post
+                                     => {UrlHelpers.WithSchemeAndPath(config.ExternalUrl, "gemini", $"/post/{post.PostId}")} Go To Post
                                      """, GeminiContentTypes.Gemtext);
             }
             case ContentType.Webm:
@@ -228,15 +230,15 @@ public class PostEndpoints : EndpointGroup
                 videoConversionService.ConvertVideo(body, postId, postId + ".webm");
 
                 return new Response($"""
-                                     # Post Uploaded!
-                                     
-                                     ## The video is currently being converted, it will be unavailable until that is complete.
+                                      # Post Uploaded!
+                                      
+                                      ## The video is currently being converted, it will be unavailable until that is complete.
 
-                                     ## Details
-                                     Dimensions: {mediaInfo.PrimaryVideoStream.Width:N0}x{mediaInfo.PrimaryVideoStream.Height:N0}
+                                      ## Details
+                                      Dimensions: {mediaInfo.PrimaryVideoStream.Width:N0}x{mediaInfo.PrimaryVideoStream.Height:N0}
 
-                                     => /post/{postId} Go To Post
-                                     """, GeminiContentTypes.Gemtext);
+                                      => {UrlHelpers.WithSchemeAndPath(config.ExternalUrl, "gemini", $"/post/{post.PostId}")} Go To Post
+                                      """, GeminiContentTypes.Gemtext);
             }
             default:
                 return new Response($"Unknown MIME type {context.RequestHeaders["Content-Type"]}", ContentType.Plaintext, BadRequest);
