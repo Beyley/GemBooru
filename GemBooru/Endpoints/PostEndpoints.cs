@@ -27,7 +27,7 @@ public class PostEndpoints : EndpointGroup
     [NullStatusCode(NotFound)]
     public string? GetPosts(RequestContext context, GemBooruDatabaseContext database, int? page, string? searchType, string? query)
     {
-        const int pageSize = 20;
+        const int pageSize = 3;
 
         page ??= 0;
         
@@ -53,12 +53,14 @@ public class PostEndpoints : EndpointGroup
         
         response.AppendLine($@"# Showing {posts.Count}/{posts.TotalEntries} posts");
         
-        response.AppendLine($@"### Page {(int)page + 1}/{(posts.TotalEntries + 20) / pageSize}");
+        response.AppendLine($@"### Page {(int)page + 1}/{(posts.TotalEntries + pageSize) / pageSize}");
+
+        string pagePrefix = searchType == null ? "/posts/" : $"/posts/{searchType}/{query}/";
         
         if(page > 0)
-            response.AppendLine($"=> /posts/{page - 1} Previous Page");
+            response.AppendLine($"=> {pagePrefix}{page - 1} Previous Page");
         if(skip + pageSize < posts.TotalEntries)
-            response.AppendLine($"=> /posts/{page + 1} Next Page");
+            response.AppendLine($"=> {pagePrefix}{page + 1} Next Page");
         
         response.Append('\n');
         foreach (var post in posts.Items.ToList())
