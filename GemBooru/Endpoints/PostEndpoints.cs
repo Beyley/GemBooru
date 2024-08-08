@@ -27,27 +27,27 @@ public class PostEndpoints : EndpointGroup
     [NullStatusCode(NotFound)]
     public string? GetPosts(RequestContext context, GemBooruDatabaseContext database, int? page, string? searchType, string? query)
     {
-        const int pageSize = 3;
+        const int pageSize = 20;
 
         page ??= 0;
         
         var skip = page.Value * pageSize;
 
         DbList<DbPost> posts;
-        if (searchType != null && query != null)
-            switch (searchType)
-            {
-                case "by_tag":
-                    posts = new DbList<DbPost>(database.GetPostsByTag(query), skip, pageSize);
-                    break;
-                case "by_user":
-                    posts = new DbList<DbPost>(database.GetPostsByUser(int.Parse(query)), skip, pageSize);
-                    break;
-                default:
-                    return null;
-            }
-        else
-            posts = new DbList<DbPost>(database.GetRecentPosts(), skip, pageSize);
+        switch (searchType)
+        {
+            case null:
+                posts = new DbList<DbPost>(database.GetRecentPosts(), skip, pageSize);
+                break;
+            case "by_tag":
+                posts = new DbList<DbPost>(database.GetPostsByTag(query), skip, pageSize);
+                break;
+            case "by_user":
+                posts = new DbList<DbPost>(database.GetPostsByUser(int.Parse(query)), skip, pageSize);
+                break;
+            default:
+                return null;
+        }
 
         StringBuilder response = new();
         
