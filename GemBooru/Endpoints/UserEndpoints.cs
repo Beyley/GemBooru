@@ -27,7 +27,7 @@ public class UserEndpoints : EndpointGroup
                          ## Biography
                          {user.Bio}
 
-                         ## Made {"post".ToQuantity(database.GetAllPostsByUser(user.UserId).Count())}
+                         ## Made {"post".ToQuantity(database.GetPostsByUser(user.UserId).Count())}
                          
                          => /posts/by_user/{userId} Posts
                          """);

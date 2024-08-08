@@ -29,38 +29,39 @@ public class PostEndpoints : EndpointGroup
     {
         const int pageSize = 20;
 
-        page = page ?? 0;
+        page ??= 0;
         
         var skip = page.Value * pageSize;
 
-        var totalPostCount = database.TotalPostCount();
-        
-        List<DbPost> posts;
+        DbList<DbPost> posts;
         if (searchType != null && query != null)
             switch (searchType)
             {
                 case "by_tag":
-                    posts = database.GetPostsByTag(skip, pageSize, query).ToList();
+                    posts = new DbList<DbPost>(database.GetPostsByTag(query), skip, pageSize);
                     break;
                 case "by_user":
-                    posts = database.GetPostsByUser(skip, pageSize, int.Parse(query)).ToList();
+                    posts = new DbList<DbPost>(database.GetPostsByUser(int.Parse(query)), skip, pageSize);
                     break;
                 default:
                     return null;
             }
         else
-            posts = database.GetAllPosts(skip, pageSize).ToList();
+            posts = new DbList<DbPost>(database.GetRecentPosts(), skip, pageSize);
 
         StringBuilder response = new();
         
-        response.AppendLine($@"# Showing {posts.Count}/{totalPostCount} posts");
-        response.AppendLine($@"### Page {(int)page + 1}/{(totalPostCount + 20) / pageSize}");
+        response.AppendLine($@"# Showing {posts.Count}/{posts.TotalEntries} posts");
+        
+        response.AppendLine($@"### Page {(int)page + 1}/{(posts.TotalEntries + 20) / pageSize}");
+        
         if(page > 0)
             response.AppendLine($"=> /posts/{page - 1} Previous Page");
-        if(skip + pageSize < totalPostCount)
+        if(skip + pageSize < posts.TotalEntries)
             response.AppendLine($"=> /posts/{page + 1} Next Page");
+        
         response.Append('\n');
-        foreach (var post in posts)
+        foreach (var post in posts.Items.ToList())
         {
             response.AppendLine($"## Post by {post.Uploader.Name}");
             response.AppendLine(
@@ -111,17 +112,6 @@ public class PostEndpoints : EndpointGroup
         response.AppendLine($"=> /tag/{post.PostId} Add Tag");
         
         return response.ToString();
-        
-        return $@"
-
-
-
-## Tags:
-{tagString}
-
- 
-
-";
     }
 
     [GeminiEndpoint("/tag/{postId}")]
